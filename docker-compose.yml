@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  mongo:
+    container_name: 'mongo-4.4'
+    image: mongo:4.4-rc
+    expose:
+      - 27017
+    ports:
+      - '27017:27017'
+    tty: true
+    restart: always
+#    volumes:
+#      - /media/jose/jose1/mongo-volume:/data/db
