@@ -5,6 +5,7 @@ import com.app.chat.data.user.repository.AddUserRepository
 import com.app.chat.data.user.repository.FindUserByEmailRepository
 import com.app.chat.data.user.repository.FindUserByIdRepository
 import com.app.chat.entities.models.user.User
+import com.app.chat.infra.repositories.UserMongoRepository
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,16 +15,7 @@ import spock.lang.Specification
 class AddFriendImplTest extends Specification {
 
     @SpringBean
-    FindUserByIdRepository findUserByIdRepository = Mock()
-
-    @SpringBean
-    AddUserRepository addUserRepository = Mock()
-
-    @SpringBean
-    FindUserByEmailRepository findUserByEmailRepository = Mock()
-
-    @SpringBean
-    AddFriendRepository addFriendRepository = Mock()
+    UserMongoRepository repository = Mock()
 
     @Autowired
     AddFriendImpl sut
@@ -34,10 +26,10 @@ class AddFriendImplTest extends Specification {
         def friend = makeUser().id("any_id_friend").build()
 
         when:
-        sut.addFriend(user.getId(), Collections.singleton(friend))
+        sut.add(user.getId(), Collections.singleton(friend))
 
         then:
-        1 * addFriendRepository.addFriend(user.getId(), Collections.singleton(friend))
+        1 * repository.addFriend(user.getId(), Collections.singleton(friend))
     }
 
     def "Should return null if User not exists"() {
@@ -46,8 +38,8 @@ class AddFriendImplTest extends Specification {
         def friend = makeUser().id("any_id_friend").build()
 
         when:
-        addFriendRepository.addFriend(user.getId(), Collections.singleton(friend)) >> null
-        def userUpdated = sut.addFriend(user.getId(), Collections.singleton(friend))
+        repository.addFriend(user.getId(), Collections.singleton(friend)) >> null
+        def userUpdated = sut.add(user.getId(), Collections.singleton(friend))
 
         then:
         userUpdated == null

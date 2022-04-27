@@ -1,11 +1,9 @@
 package com.app.chat.data.user.usecase
 
-import com.app.chat.data.user.repository.AddFriendRepository
-import com.app.chat.data.user.repository.AddUserRepository
-import com.app.chat.data.user.repository.FindUserByEmailRepository
-import com.app.chat.data.user.repository.FindUserByIdRepository
+
 import com.app.chat.entities.models.user.User
 import com.app.chat.entities.usecases.user.AddUserModel
+import com.app.chat.infra.repositories.UserMongoRepository
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -15,16 +13,7 @@ import spock.lang.Specification
 class AddUserIfNotExistsImplTest extends Specification {
 
     @SpringBean
-    AddUserRepository addUserRepository = Mock()
-
-    @SpringBean
-    FindUserByEmailRepository findUserByEmailRepository = Mock()
-
-    @SpringBean
-    FindUserByIdRepository findUserByIdRepository = Mock()
-
-    @SpringBean
-    AddFriendRepository addFriendRepository = Mock()
+    UserMongoRepository repository = Mock()
 
     @Autowired
     AddUserIfNotExistsImpl sut
@@ -37,7 +26,7 @@ class AddUserIfNotExistsImplTest extends Specification {
         sut.addIfNotExists(addUserModel)
 
         then: "the AddUserRepository will be called"
-        1 * addUserRepository.add(_)
+        1 * repository.add(_)
     }
 
     def "Should return User on AddUserRepository suceeds"() {
@@ -46,7 +35,7 @@ class AddUserIfNotExistsImplTest extends Specification {
         def validUser = makeUser().id("any_id").build()
 
         when: "a sut with addUserModelParam"
-        addUserRepository.add(_ as User) >> validUser
+        repository.add(_ as User) >> validUser
 
         then: "the sut will return a valid User"
         sut.addIfNotExists(addUserModel) == validUser
@@ -60,7 +49,7 @@ class AddUserIfNotExistsImplTest extends Specification {
         sut.addIfNotExists(addUserModel)
 
         then: "the FindUserByEmailRepository will be called with correct values"
-        1 * findUserByEmailRepository.findByEmail("any_email")
+        1 * repository.findByEmail("any_email")
     }
 
     def "Should not call AddUserRepository if FindUserByEmailRepository returns an User"() {
@@ -69,14 +58,14 @@ class AddUserIfNotExistsImplTest extends Specification {
         def validUser = makeUser().id("any_id").build()
 
         when: "FindUserByEmailRepository is called"
-        findUserByEmailRepository.findByEmail("any_email") >> validUser
+        repository.findByEmail("any_email") >> validUser
 
         and: "sut is called"
         sut.addIfNotExists(addUserModel)
 
 
         then: "the AddUserRepository will not be called"
-        0 * addUserRepository.add(addUserModel)
+        0 * repository.add(addUserModel)
     }
 
     AddUserModel makeAddUserModel() {

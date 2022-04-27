@@ -1,10 +1,8 @@
 package com.app.chat.data.user.usecase
 
-import com.app.chat.data.user.repository.AddFriendRepository
-import com.app.chat.data.user.repository.AddUserRepository
-import com.app.chat.data.user.repository.FindUserByEmailRepository
-import com.app.chat.data.user.repository.FindUserByIdRepository
+
 import com.app.chat.entities.models.user.User
+import com.app.chat.infra.repositories.UserMongoRepository
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,16 +12,7 @@ import spock.lang.Specification
 class FindUserByIdImplTest extends Specification {
 
     @SpringBean
-    FindUserByIdRepository findUserByIdRepository = Mock()
-
-    @SpringBean
-    AddUserRepository addUserRepository = Mock()
-
-    @SpringBean
-    FindUserByEmailRepository findUserByEmailRepository = Mock()
-
-    @SpringBean
-    AddFriendRepository addFriendRepository = Mock()
+    UserMongoRepository repository = Mock()
 
     @Autowired
     FindUserByIdImpl sut
@@ -36,7 +25,7 @@ class FindUserByIdImplTest extends Specification {
         sut.getById(id)
 
         then: "the FindUserByIdRepository will be called"
-        1 * findUserByIdRepository.findById(_)
+        1 * repository.findById(_)
     }
 
     def "Should return User on FindUserByIdRepository suceeds"() {
@@ -45,7 +34,7 @@ class FindUserByIdImplTest extends Specification {
         def validUser = makeUser().id("any_id").build()
 
         when: "a sut with id"
-        findUserByIdRepository.findById(id) >> validUser
+        repository.findById(id) >> validUser
 
         then: "the sut will return a valid User"
         sut.getById(id) == validUser
@@ -56,7 +45,7 @@ class FindUserByIdImplTest extends Specification {
         def id = "any_id"
 
         when: "a sut with id"
-        findUserByIdRepository.findById(id) >> null
+        repository.findById(id) >> null
 
         then: "the sut will return a valid User"
         sut.getById(id) == null
