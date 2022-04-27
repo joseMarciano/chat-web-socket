@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification
 
 @SpringBootTest
-class FindUserByIdImplTest extends Specification {
+class AddFriendImplTest extends Specification {
 
     @SpringBean
     FindUserByIdRepository findUserByIdRepository = Mock()
@@ -26,40 +26,31 @@ class FindUserByIdImplTest extends Specification {
     AddFriendRepository addFriendRepository = Mock()
 
     @Autowired
-    FindUserByIdImpl sut
+    AddFriendImpl sut
 
-    def "Should call FindUserByIdRepository"() {
+    def "Should call AddFriendRepository"() {
         given: "a exists ID"
-        def id = "any_id"
+        def user = makeUser().id("any_id").build()
+        def friend = makeUser().id("any_id_friend").build()
 
-        when: "a use case with addUserModelParam"
-        sut.getById(id)
+        when:
+        sut.addFriend(user.getId(), Collections.singleton(friend))
 
-        then: "the FindUserByIdRepository will be called"
-        1 * findUserByIdRepository.findById(_)
+        then:
+        1 * addFriendRepository.addFriend(user.getId(), Collections.singleton(friend))
     }
 
-    def "Should return User on FindUserByIdRepository suceeds"() {
-        given: "a exists ID"
-        def id = "any_id"
-        def validUser = makeUser().id("any_id").build()
+    def "Should return null if User not exists"() {
+        given:
+        def user = makeUser().id("invalid_id").build()
+        def friend = makeUser().id("any_id_friend").build()
 
-        when: "a sut with id"
-        findUserByIdRepository.findById(id) >> validUser
+        when:
+        addFriendRepository.addFriend(user.getId(), Collections.singleton(friend)) >> null
+        def userUpdated = sut.addFriend(user.getId(), Collections.singleton(friend))
 
-        then: "the sut will return a valid User"
-        sut.getById(id) == validUser
-    }
-
-    def "Should return null on FindUserByIdRepository fails"() {
-        given: "a non exists ID"
-        def id = "any_id"
-
-        when: "a sut with id"
-        findUserByIdRepository.findById(id) >> null
-
-        then: "the sut will return a valid User"
-        sut.getById(id) == null
+        then:
+        userUpdated == null
     }
 
     User.UserBuilder makeUser() {
@@ -68,6 +59,6 @@ class FindUserByIdImplTest extends Specification {
                 .password("any_password")
                 .email("any_email")
                 .name("any_name")
-                .friends(Collections.emptyList())
+                .friends(Arrays.asList("any_id", "other_any_id"))
     }
 }

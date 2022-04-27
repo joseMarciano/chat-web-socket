@@ -1,6 +1,7 @@
 package com.app.chat.controller
 
 import com.app.chat.entities.models.user.User
+import com.app.chat.entities.usecases.user.AddFriend
 import com.app.chat.entities.usecases.user.AddUserIfNotExists
 import com.app.chat.entities.usecases.user.AddUserModel
 import com.app.chat.entities.usecases.user.FindUserById
@@ -31,6 +32,9 @@ class UserControllerTest extends Specification {
     @SpringBean
     private FindUserById findUserById = Mock()
 
+    @SpringBean
+    private AddFriend addFriend = Mock()
+
     def "when post is performed then the response has status 200 and content is a User"() {
         given: "AddUserModel Dto"
         def addUserModel = makeAddUserModel()
@@ -44,6 +48,26 @@ class UserControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(addUserModel)))
+
+        then: "Status is 200 and the response is User"
+        perform
+                .andExpect(status().isOk())
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(user)))
+    }
+
+    def "when post/add-friend/id is performed then the response has status 200 and content is a User"() {
+        given: "List of Users"
+        def friends = Collections.singleton(makeUser())
+        def user = makeUser()
+
+        when:
+        addFriend.add(_ as String, _ as Collection) >> user
+
+        and:
+        def perform = mvc.perform(post("/user/add-friend/any_id")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(friends)))
 
         then: "Status is 200 and the response is User"
         perform

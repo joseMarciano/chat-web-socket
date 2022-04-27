@@ -1,5 +1,6 @@
 package com.app.chat.data.user.usecase
 
+import com.app.chat.data.user.repository.AddFriendRepository
 import com.app.chat.data.user.repository.AddUserRepository
 import com.app.chat.data.user.repository.FindUserByEmailRepository
 import com.app.chat.data.user.repository.FindUserByIdRepository
@@ -21,6 +22,9 @@ class AddUserIfNotExistsImplTest extends Specification {
 
     @SpringBean
     FindUserByIdRepository findUserByIdRepository = Mock()
+
+    @SpringBean
+    AddFriendRepository addFriendRepository = Mock()
 
     @Autowired
     AddUserIfNotExistsImpl sut

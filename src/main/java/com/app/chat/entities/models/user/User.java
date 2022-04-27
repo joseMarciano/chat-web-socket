@@ -16,6 +16,6 @@ public class User {
     private String email;
     private String name;
     private String password;
-    private List<User> friends;
+    private List<String> friends;
 
 }
