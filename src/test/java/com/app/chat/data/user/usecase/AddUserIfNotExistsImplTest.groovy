@@ -2,6 +2,7 @@ package com.app.chat.data.user.usecase
 
 import com.app.chat.data.user.repository.AddUserRepository
 import com.app.chat.data.user.repository.FindUserByEmailRepository
+import com.app.chat.data.user.repository.FindUserByIdRepository
 import com.app.chat.entities.models.user.User
 import com.app.chat.entities.usecases.user.AddUserModel
 import org.spockframework.spring.SpringBean
@@ -17,6 +18,9 @@ class AddUserIfNotExistsImplTest extends Specification {
 
     @SpringBean
     FindUserByEmailRepository findUserByEmailRepository = Mock()
+
+    @SpringBean
+    FindUserByIdRepository findUserByIdRepository = Mock()
 
     @Autowired
     AddUserIfNotExistsImpl sut

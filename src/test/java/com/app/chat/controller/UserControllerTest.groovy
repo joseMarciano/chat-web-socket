@@ -3,6 +3,7 @@ package com.app.chat.controller
 import com.app.chat.entities.models.user.User
 import com.app.chat.entities.usecases.user.AddUserIfNotExists
 import com.app.chat.entities.usecases.user.AddUserModel
+import com.app.chat.entities.usecases.user.FindUserById
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import spock.lang.Specification
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -26,8 +28,10 @@ class UserControllerTest extends Specification {
     @SpringBean
     private AddUserIfNotExists addUserIfNotExists = Mock()
 
-    def "when post is performed then the response has status 200 and content is a User"() {
+    @SpringBean
+    private FindUserById findUserById = Mock()
 
+    def "when post is performed then the response has status 200 and content is a User"() {
         given: "AddUserModel Dto"
         def addUserModel = makeAddUserModel()
         def user = makeUser()
@@ -40,6 +44,24 @@ class UserControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(addUserModel)))
+
+        then: "Status is 200 and the response is User"
+        perform
+                .andExpect(status().isOk())
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(user)))
+    }
+
+    def "when get/id is performed then the response has status 200 and content is a User"() {
+        given: "valid id"
+        def user = makeUser()
+
+        when:
+        findUserById.getById("any_id") >> makeUser()
+
+        and:
+        def perform = mvc.perform(get("/user/any_id")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
 
         then: "Status is 200 and the response is User"
         perform
