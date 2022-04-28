@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,9 +68,10 @@ public class UserMongoRepository implements
         friendsUser
                 .addAll(friendsToAdd);
 
+
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(user.getId()));
-        mongoTemplate.updateFirst(query, Update.update("friends", friendsUser), User.class, COLLECTION_USER_NAME);
+        mongoTemplate.updateFirst(query, Update.update("friends", new HashSet<>(friendsUser)), User.class, COLLECTION_USER_NAME);
 
         return user;
     }
