@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -18,6 +18,6 @@ public class Message {
     private String to;
     private String content;
     private StatusMessage status;
-    private OffsetDateTime date;
+    private LocalDateTime date;
 
 }

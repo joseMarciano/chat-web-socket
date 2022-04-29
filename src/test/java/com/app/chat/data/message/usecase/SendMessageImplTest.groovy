@@ -23,14 +23,14 @@ class SendMessageImplTest extends Specification {
     def "Should sendMessage"() {
         given: "a exists ID"
         def messageToSend = makeMessageToSend().build()
-        repository.addMessage(messageToSend) >> makeMessageToSend().id("any_id").build()
+        def messageSaved = makeMessageToSend().id("any_id").build()
+        repository.addMessage(messageToSend) >> messageSaved
 
         when:
         sut.send(messageToSend)
 
         then:
-        1 * notificationSender.sendNotification(Collections.singleton("any_id"))
-        1 * repository.addMessage(messageToSend)
+        1 * notificationSender.sendNotification(Collections.singleton(messageSaved))
     }
 
     Message.MessageBuilder makeMessageToSend() {
