@@ -7,7 +7,7 @@ import com.app.chat.entities.models.message.StatusMessage;
 import com.app.chat.entities.usecases.message.SendMessage;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Service
@@ -24,12 +24,12 @@ public class SendMessageImpl implements SendMessage {
 
     @Override
     public Message send(Message message) {
-        message.setDate(OffsetDateTime.now());
+        message.setDate(LocalDateTime.now());
         message.setStatus(StatusMessage.SENT);
 
         Message messageToSend = addMessageRepository.addMessage(message);
 
-        notificationSender.sendNotification(Collections.singleton(message.getFrom()));
+        notificationSender.sendNotification(Collections.singleton(messageToSend));
 
         return messageToSend;
     }
