@@ -1,10 +1,7 @@
 package com.app.chat.controller;
 
 import com.app.chat.entities.models.user.User;
-import com.app.chat.entities.usecases.user.AddFriend;
-import com.app.chat.entities.usecases.user.AddUserIfNotExists;
-import com.app.chat.entities.usecases.user.AddUserModel;
-import com.app.chat.entities.usecases.user.FindUserById;
+import com.app.chat.entities.usecases.user.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +13,16 @@ public class UserController {
 
     private final AddUserIfNotExists addUserIfNotExists;
     private final FindUserById findUserById;
-
+    private final FindUserByEmail findUserByEmail;
     private final AddFriend addFriend;
 
     public UserController(AddUserIfNotExists addUserIfNotExists,
                           FindUserById findUserById,
+                          FindUserByEmail findUserByEmail,
                           AddFriend addFriend) {
         this.addUserIfNotExists = addUserIfNotExists;
         this.findUserById = findUserById;
+        this.findUserByEmail = findUserByEmail;
         this.addFriend = addFriend;
     }
 
@@ -43,5 +42,10 @@ public class UserController {
     @GetMapping("{id}")
     public ResponseEntity<User> getById(@PathVariable String id) {
         return ResponseEntity.ok(findUserById.getById(id));
+    }
+
+    @GetMapping("email")
+    public ResponseEntity<User> findByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(findUserByEmail.getByEmail(email));
     }
 }

@@ -4,6 +4,7 @@ import com.app.chat.entities.models.user.User
 import com.app.chat.entities.usecases.user.AddFriend
 import com.app.chat.entities.usecases.user.AddUserIfNotExists
 import com.app.chat.entities.usecases.user.AddUserModel
+import com.app.chat.entities.usecases.user.FindUserByEmail
 import com.app.chat.entities.usecases.user.FindUserById
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.spockframework.spring.SpringBean
@@ -34,6 +35,9 @@ class UserControllerTest extends Specification {
 
     @SpringBean
     private AddFriend addFriend = Mock()
+
+    @SpringBean
+    private FindUserByEmail findUserByEmail = Mock()
 
     def "when post is performed then the response has status 200 and content is a User"() {
         given: "AddUserModel Dto"
@@ -84,6 +88,25 @@ class UserControllerTest extends Specification {
 
         and:
         def perform = mvc.perform(get("/user/any_id")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+
+        then: "Status is 200 and the response is User"
+        perform
+                .andExpect(status().isOk())
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(user)))
+    }
+
+    def "when get/email is performed then the response has status 200 and content is a User"() {
+        given: "valid"
+        def user = makeUser()
+
+        when:
+        findUserByEmail.getByEmail("email@mail.com") >> makeUser()
+
+        and:
+        def perform = mvc.perform(get("/user/email")
+                .param("email", "email@mail.com")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
 
