@@ -22,8 +22,7 @@ public class NotificationImpl implements NotificationSender {
     public void sendNotification(Collection<Message> messages) {
         messages.forEach(message -> {
             simpMessagingTemplate.convertAndSendToUser(
-                    format("%s/%s", message.getFrom(), message.getTo()),
-//                    message.getTo(),
+                    message.getTo() + message.getFrom(),
                     "/private",
                     message
             );
