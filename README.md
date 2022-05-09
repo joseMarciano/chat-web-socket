@@ -10,7 +10,7 @@
 
 ## :wrench: Architecture fluxogram
 <div style="background: white"> 
-    <img src="./diagram.png">
+    <img src="./src/main/resources/static/diagram.png">
 </div>
 
 
