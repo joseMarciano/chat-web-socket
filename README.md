@@ -4,7 +4,7 @@
 ## :pushpin: Application purpose
  - This application is a simple chat application where you can do the register and add a friend to talk.
  - The purpose of application is improve my skills on Spring Boot, and to learn about WebSocket and Stomp.
- - The back end of application was made using Spring boot, MongoDb and Spock for tests. 
+ - The back end of application was made using Spring boot, MongoDB and Spock for tests. 
  - The front end of application was made using React and Typescript.
 
 
